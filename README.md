@@ -1,8 +1,8 @@
 # Hospital_Billing
- ===================================================
+
 
 # Technologies Needed:
-===================
+
 1) Java Development Kit (JDK) installed on your machine (version 8 or higher).
 2) Maven build tool installed on your machine.
 3) Eclipse IDE (or any other Java IDE of your choice e.g Intellij) make sure its installed on your computer.
@@ -10,7 +10,7 @@
 5) Internet connection to download dependencies from Maven repositories.
 
 # Setting Up 
-=========
+
 
 1) Clone the Repository:
    - Clone the repository containing the Hospital Billing Spring Boot application code to your local machine.
