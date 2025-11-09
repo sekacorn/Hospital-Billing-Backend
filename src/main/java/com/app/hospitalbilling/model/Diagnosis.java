@@ -5,55 +5,138 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+
 /**
  * Entity class representing a Diagnosis in the hospital billing system.
+ * This class maps to the 'diagnosis' table in the database.
+ *
+ * A diagnosis includes a medical code (such as ICD-10), description,
+ * category, and active status.
  */
 @Entity
+@Table(name = "diagnosis")
 public class Diagnosis {
 
+    /**
+     * Unique identifier for the diagnosis.
+     * Auto-generated using IDENTITY strategy.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Column(nullable = false)
-    private String name;
+    /**
+     * Diagnosis code (e.g., ICD-10 code like "A00.0").
+     * This field is required and cannot be null.
+     */
+    @Column(nullable = false, length = 50)
+    private String code;
 
-    @Column(nullable = false)
-    private double price;
+    /**
+     * Detailed description of the diagnosis.
+     * This field is required and cannot be null.
+     */
+    @Column(nullable = false, length = 500)
+    private String description;
 
-    // No-argument constructor
+    /**
+     * Category of the diagnosis (e.g., "Infectious Disease", "Cardiovascular").
+     * This field is optional.
+     */
+    @Column(length = 100)
+    private String category;
+
+    /**
+     * Indicates whether the diagnosis is currently active.
+     * Defaults to true.
+     */
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    /**
+     * Default no-argument constructor required by JPA.
+     */
     public Diagnosis() {
     }
 
-    // Parameterized constructor
-    public Diagnosis(String name, double price) {
-        this.name = name;
-        this.price = price;
+    /**
+     * Constructor with essential fields.
+     *
+     * @param code Diagnosis code
+     * @param description Diagnosis description
+     */
+    public Diagnosis(String code, String description) {
+        this.code = code;
+        this.description = description;
+        this.isActive = true;
     }
 
-    // Getters and setters
+    /**
+     * Full constructor with all fields.
+     *
+     * @param code Diagnosis code
+     * @param description Diagnosis description
+     * @param category Diagnosis category
+     * @param isActive Active status
+     */
+    public Diagnosis(String code, String description, String category, Boolean isActive) {
+        this.code = code;
+        this.description = description;
+        this.category = category;
+        this.isActive = isActive;
+    }
 
-    public int getId() {
+    // Getters and Setters
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public double getPrice() {
-        return price;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    @Override
+    public String toString() {
+        return "Diagnosis{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }

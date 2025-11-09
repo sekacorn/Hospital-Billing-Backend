@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId> <!-- Updated groupId -->
+    <groupId>com.app</groupId>
     <artifactId>hospital-billing</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
@@ -58,10 +58,15 @@
         <version>${mysql.version}</version> <!-- Use the specified version -->
         <scope>runtime</scope>
     </dependency>
+    <!-- H2 Database for development and testing -->
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-tomcat</artifactId>
-        <scope>provided</scope> <!-- Provided by the Tomcat server -->
     </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -111,9 +116,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip> <!-- Skip the packaging of a runnable jar -->
-                </configuration>
             </plugin>
 
             <!-- Jacoco for code coverage -->

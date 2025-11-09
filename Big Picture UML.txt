@@ -1,40 +1,428 @@
-Authour: Sekacorn
+Author: Sekacorn
+Project: Hospital Billing Backend
+Technology: Spring Boot 3.1.0, Java 17, JPA/Hibernate
+Database: H2 (dev) / MySQL (prod)
 
-+--------------------------------------------------+
-|                    Application                   |
-+--------------------------------------------------+
-| +main(args: String[]): void                      |
-+--------------------------------------------------+
-                         |
-                         |
-                         |
-			 |
-                         v
-+--------------------------------------------------+
-|                   Controller                     |
-+--------------------------------------------------+
-| +handleRequest(): String                         |
-+--------------------------------------------------+
-                         |
-                         |
-                         |
-			 |
-                         v
-+--------------------------------------------------+
-|                    Service                       |
-+--------------------------------------------------+
-| +performAction(): void                           |
-+--------------------------------------------------+
-                         |
-                         |
-                         |
-			 |
-                         v
-+--------------------------------------------------+
-|                    Repository                    |
-+--------------------------------------------------+
-| +save(data: Object): Object                      |
-| +findById(id: String): Object                    |
-| +findAll(): List<Object>                         |
-| +delete(id: String): void                        |
-+--------------------------------------------------+
+================================================================================
+                    HOSPITAL BILLING BACKEND ARCHITECTURE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         SPRING BOOT APPLICATION                             │
+│                    HospitalBillingApplication.java                          │
+│                                                                             │
+│  @SpringBootApplication                                                     │
+│  + main(args: String[]): void                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Initializes & Configures
+                                      │
+            ┌─────────────────────────┼─────────────────────────┐
+            │                         │                         │
+            ▼                         ▼                         ▼
+┌────────────────────┐    ┌────────────────────┐    ┌────────────────────┐
+│  Configuration     │    │    Controllers     │    │     Services       │
+│    Layer           │    │      Layer         │    │      Layer         │
+└────────────────────┘    └────────────────────┘    └────────────────────┘
+            │                         │                         │
+            │                         │                         │
+            ▼                         ▼                         ▼
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           CONFIGURATION LAYER                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────┐          │
+│  │ WebConfig                                                    │          │
+│  │ @Configuration                                               │          │
+│  │                                                              │          │
+│  │ + corsConfigurer(): WebMvcConfigurer                        │          │
+│  │   - Allowed Origins: http://localhost:4200                  │          │
+│  │   - Allowed Methods: GET, POST, PUT, DELETE, OPTIONS        │          │
+│  │   - Allowed Headers: *                                      │          │
+│  └──────────────────────────────────────────────────────────────┘          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           REST CONTROLLER LAYER                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────┐           │
+│  │ BillingController                                           │           │
+│  │ @RestController                                             │           │
+│  │ @RequestMapping("/api")                                     │           │
+│  │ @CrossOrigin(origins = "http://localhost:4200")            │           │
+│  │                                                             │           │
+│  │ DIAGNOSIS ENDPOINTS:                                        │           │
+│  │ + getAllDiagnoses(): ResponseEntity<List<Diagnosis>>       │           │
+│  │   GET /api/diagnoses                                        │           │
+│  │                                                             │           │
+│  │ + getDiagnosisById(id: Integer): ResponseEntity<Diagnosis>  │           │
+│  │   GET /api/diagnoses/{id}                                   │           │
+│  │                                                             │           │
+│  │ + createDiagnosis(diagnosis: Diagnosis):                    │           │
+│  │   ResponseEntity<Diagnosis>                                 │           │
+│  │   POST /api/diagnoses                                       │           │
+│  │                                                             │           │
+│  │ + updateDiagnosis(id: Integer, diagnosis: Diagnosis):       │           │
+│  │   ResponseEntity<Diagnosis>                                 │           │
+│  │   PUT /api/diagnoses/{id}                                   │           │
+│  │                                                             │           │
+│  │ + deleteDiagnosis(id: Integer): ResponseEntity<Void>        │           │
+│  │   DELETE /api/diagnoses/{id}                                │           │
+│  │                                                             │           │
+│  │ PHYSICIAN ENDPOINTS:                                        │           │
+│  │ + getAllPhysicians(): ResponseEntity<List<Physician>>       │           │
+│  │   GET /api/physicians                                       │           │
+│  │                                                             │           │
+│  │ + getPhysicianById(id: Integer): ResponseEntity<Physician>  │           │
+│  │   GET /api/physicians/{id}                                  │           │
+│  │                                                             │           │
+│  │ + createPhysician(physician: Physician):                    │           │
+│  │   ResponseEntity<Physician>                                 │           │
+│  │   POST /api/physicians                                      │           │
+│  │                                                             │           │
+│  │ + updatePhysician(id: Integer, physician: Physician):       │           │
+│  │   ResponseEntity<Physician>                                 │           │
+│  │   PUT /api/physicians/{id}                                  │           │
+│  │                                                             │           │
+│  │ + deletePhysician(id: Integer): ResponseEntity<Void>        │           │
+│  │   DELETE /api/physicians/{id}                               │           │
+│  │                                                             │           │
+│  │ TREATMENT ENDPOINTS:                                        │           │
+│  │ + getAllTreatments(): ResponseEntity<List<Treatment>>       │           │
+│  │   GET /api/treatments                                       │           │
+│  │                                                             │           │
+│  │ + getTreatmentById(id: Integer): ResponseEntity<Treatment>  │           │
+│  │   GET /api/treatments/{id}                                  │           │
+│  │                                                             │           │
+│  │ + createTreatment(treatment: Treatment):                    │           │
+│  │   ResponseEntity<Treatment>                                 │           │
+│  │   POST /api/treatments                                      │           │
+│  │                                                             │           │
+│  │ + updateTreatment(id: Integer, treatment: Treatment):       │           │
+│  │   ResponseEntity<Treatment>                                 │           │
+│  │   PUT /api/treatments/{id}                                  │           │
+│  │                                                             │           │
+│  │ + deleteTreatment(id: Integer): ResponseEntity<Void>        │           │
+│  │   DELETE /api/treatments/{id}                               │           │
+│  └─────────────────────────────────────────────────────────────┘           │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Uses
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            SERVICE LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────┐           │
+│  │ BillingService                                              │           │
+│  │ @Service                                                    │           │
+│  │                                                             │           │
+│  │ DIAGNOSIS OPERATIONS:                                       │           │
+│  │ + getAllDiagnoses(): List<Diagnosis>                        │           │
+│  │ + getDiagnosisById(id: Integer): Diagnosis                  │           │
+│  │ + saveDiagnosis(diagnosis: Diagnosis): Diagnosis            │           │
+│  │ + deleteDiagnosis(id: Integer): void                        │           │
+│  │                                                             │           │
+│  │ PHYSICIAN OPERATIONS:                                       │           │
+│  │ + getAllPhysicians(): List<Physician>                       │           │
+│  │ + getPhysicianById(id: Integer): Physician                  │           │
+│  │ + savePhysician(physician: Physician): Physician            │           │
+│  │ + deletePhysician(id: Integer): void                        │           │
+│  │                                                             │           │
+│  │ TREATMENT OPERATIONS:                                       │           │
+│  │ + getAllTreatments(): List<Treatment>                       │           │
+│  │ + getTreatmentById(id: Integer): Treatment                  │           │
+│  │ + saveTreatment(treatment: Treatment): Treatment            │           │
+│  │ + deleteTreatment(id: Integer): void                        │           │
+│  └─────────────────────────────────────────────────────────────┘           │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Uses
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         REPOSITORY LAYER (JPA)                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ DiagnosisRepository                                        │            │
+│  │ @Repository                                                │            │
+│  │ extends JpaRepository<Diagnosis, Integer>                  │            │
+│  │                                                            │            │
+│  │ Inherited Methods:                                         │            │
+│  │ + save(diagnosis: Diagnosis): Diagnosis                    │            │
+│  │ + findById(id: Integer): Optional<Diagnosis>               │            │
+│  │ + findAll(): List<Diagnosis>                               │            │
+│  │ + deleteById(id: Integer): void                            │            │
+│  │ + count(): long                                            │            │
+│  │ + existsById(id: Integer): boolean                         │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ PhysicianRepository                                        │            │
+│  │ @Repository                                                │            │
+│  │ extends JpaRepository<Physician, Integer>                  │            │
+│  │                                                            │            │
+│  │ Inherited Methods:                                         │            │
+│  │ + save(physician: Physician): Physician                    │            │
+│  │ + findById(id: Integer): Optional<Physician>               │            │
+│  │ + findAll(): List<Physician>                               │            │
+│  │ + deleteById(id: Integer): void                            │            │
+│  │ + count(): long                                            │            │
+│  │ + existsById(id: Integer): boolean                         │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ TreatmentRepository                                        │            │
+│  │ @Repository                                                │            │
+│  │ extends JpaRepository<Treatment, Integer>                  │            │
+│  │                                                            │            │
+│  │ Inherited Methods:                                         │            │
+│  │ + save(treatment: Treatment): Treatment                    │            │
+│  │ + findById(id: Integer): Optional<Treatment>               │            │
+│  │ + findAll(): List<Treatment>                               │            │
+│  │ + deleteById(id: Integer): void                            │            │
+│  │ + count(): long                                            │            │
+│  │ + existsById(id: Integer): boolean                         │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Persists
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           MODEL/ENTITY LAYER                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ Diagnosis                                                  │            │
+│  │ @Entity                                                    │            │
+│  │ @Table(name = "diagnosis")                                 │            │
+│  │                                                            │            │
+│  │ Fields:                                                    │            │
+│  │ - id: Integer                  @Id @GeneratedValue         │            │
+│  │ - code: String                 @Column(length=50)          │            │
+│  │ - description: String          @Column(length=500)         │            │
+│  │ - category: String             @Column(length=100)         │            │
+│  │ - isActive: Boolean                                        │            │
+│  │                                                            │            │
+│  │ Methods:                                                   │            │
+│  │ + getId(): Integer                                         │            │
+│  │ + setId(id: Integer): void                                 │            │
+│  │ + getCode(): String                                        │            │
+│  │ + setCode(code: String): void                              │            │
+│  │ + getDescription(): String                                 │            │
+│  │ + setDescription(description: String): void                │            │
+│  │ + getCategory(): String                                    │            │
+│  │ + setCategory(category: String): void                      │            │
+│  │ + getIsActive(): Boolean                                   │            │
+│  │ + setIsActive(isActive: Boolean): void                     │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ Physician                                                  │            │
+│  │ @Entity                                                    │            │
+│  │ @Table(name = "physician")                                 │            │
+│  │                                                            │            │
+│  │ Fields:                                                    │            │
+│  │ - id: Integer                  @Id @GeneratedValue         │            │
+│  │ - firstName: String            @Column(length=100)         │            │
+│  │ - lastName: String             @Column(length=100)         │            │
+│  │ - specialty: String            @Column(length=100)         │            │
+│  │ - email: String                @Column(length=100)         │            │
+│  │ - phoneNumber: String          @Column(length=20)          │            │
+│  │ - licenseNumber: String        @Column(length=50)          │            │
+│  │                                                            │            │
+│  │ Methods:                                                   │            │
+│  │ + getId(): Integer                                         │            │
+│  │ + setId(id: Integer): void                                 │            │
+│  │ + getFirstName(): String                                   │            │
+│  │ + setFirstName(firstName: String): void                    │            │
+│  │ + getLastName(): String                                    │            │
+│  │ + setLastName(lastName: String): void                      │            │
+│  │ + getSpecialty(): String                                   │            │
+│  │ + setSpecialty(specialty: String): void                    │            │
+│  │ + getEmail(): String                                       │            │
+│  │ + setEmail(email: String): void                            │            │
+│  │ + getPhoneNumber(): String                                 │            │
+│  │ + setPhoneNumber(phoneNumber: String): void                │            │
+│  │ + getLicenseNumber(): String                               │            │
+│  │ + setLicenseNumber(licenseNumber: String): void            │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+│  ┌────────────────────────────────────────────────────────────┐            │
+│  │ Treatment                                                  │            │
+│  │ @Entity                                                    │            │
+│  │ @Table(name = "treatment")                                 │            │
+│  │                                                            │            │
+│  │ Fields:                                                    │            │
+│  │ - id: Integer                  @Id @GeneratedValue         │            │
+│  │ - code: String                 @Column(length=50)          │            │
+│  │ - name: String                 @Column(length=200)         │            │
+│  │ - description: String          @Column(length=500)         │            │
+│  │ - cost: Double                                             │            │
+│  │ - duration: Integer                                        │            │
+│  │ - diagnosisId: Integer                                     │            │
+│  │                                                            │            │
+│  │ Methods:                                                   │            │
+│  │ + getId(): Integer                                         │            │
+│  │ + setId(id: Integer): void                                 │            │
+│  │ + getCode(): String                                        │            │
+│  │ + setCode(code: String): void                              │            │
+│  │ + getName(): String                                        │            │
+│  │ + setName(name: String): void                              │            │
+│  │ + getDescription(): String                                 │            │
+│  │ + setDescription(description: String): void                │            │
+│  │ + getCost(): Double                                        │            │
+│  │ + setCost(cost: Double): void                              │            │
+│  │ + getDuration(): Integer                                   │            │
+│  │ + setDuration(duration: Integer): void                     │            │
+│  │ + getDiagnosisId(): Integer                                │            │
+│  │ + setDiagnosisId(diagnosisId: Integer): void               │            │
+│  └────────────────────────────────────────────────────────────┘            │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Mapped to
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATABASE LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Development: H2 In-Memory Database                                         │
+│  - URL: jdbc:h2:mem:hospital_billing                                       │
+│  - Console: http://localhost:8080/h2-console                               │
+│  - Dialect: org.hibernate.dialect.H2Dialect                                │
+│  - DDL Auto: create-drop                                                   │
+│  - Init Mode: always (loads data.sql)                                      │
+│                                                                             │
+│  Production: MySQL Database                                                 │
+│  - URL: jdbc:mysql://localhost:3306/hospital_billing                       │
+│  - Dialect: org.hibernate.dialect.MySQL8Dialect                            │
+│  - DDL Auto: update                                                        │
+│                                                                             │
+│  Tables:                                                                    │
+│  ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐       │
+│  │   diagnosis      │   │   physician      │   │   treatment      │       │
+│  ├──────────────────┤   ├──────────────────┤   ├──────────────────┤       │
+│  │ id (PK)          │   │ id (PK)          │   │ id (PK)          │       │
+│  │ code             │   │ first_name       │   │ code             │       │
+│  │ description      │   │ last_name        │   │ name             │       │
+│  │ category         │   │ specialty        │   │ description      │       │
+│  │ is_active        │   │ email            │   │ cost             │       │
+│  │                  │   │ phone_number     │   │ duration         │       │
+│  │                  │   │ license_number   │   │ diagnosis_id     │       │
+│  └──────────────────┘   └──────────────────┘   └──────────────────┘       │
+│                                                          │                  │
+│                                                          │                  │
+│                          ┌───────────────────────────────┘                  │
+│                          │ Foreign Key Relationship                         │
+│                          │ (Logical, not enforced in current schema)        │
+│                          ▼                                                  │
+│                  ┌──────────────────┐                                       │
+│                  │   diagnosis      │                                       │
+│                  └──────────────────┘                                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                         DATA FLOW & REQUEST LIFECYCLE
+================================================================================
+
+1. Client Request (Angular Frontend)
+   │
+   ├─→ HTTP Request (GET/POST/PUT/DELETE)
+   │   to http://localhost:8080/api/*
+   │
+2. Spring Boot Server
+   │
+   ├─→ CORS Filter (WebConfig)
+   │   Validates origin, methods, headers
+   │
+3. DispatcherServlet
+   │
+   ├─→ BillingController
+   │   @RestController maps request to handler method
+   │
+4. Controller Layer
+   │
+   ├─→ Validates request
+   ├─→ Calls BillingService
+   │
+5. Service Layer
+   │
+   ├─→ Business logic processing
+   ├─→ Calls Repository
+   │
+6. Repository Layer
+   │
+   ├─→ JpaRepository methods
+   ├─→ Hibernate Query Generation
+   │
+7. Database Layer
+   │
+   ├─→ SQL Execution
+   ├─→ Data Persistence/Retrieval
+   │
+8. Response Path (Reverse)
+   │
+   ├─→ Database → Repository → Service → Controller
+   ├─→ JSON Serialization (Jackson)
+   ├─→ HTTP Response to Client
+   │
+9. Frontend receives and displays data
+
+================================================================================
+                         DEPLOYMENT & BUILD CONFIGURATION
+================================================================================
+
+Build Tool: Maven 3.9+
+Java Version: 17
+Packaging: WAR
+
+Build Profiles:
+- dev: Development with H2 database
+- prod: Production with MySQL database
+
+Build Scripts:
+- build-run.sh: Flexible script with options
+  --skip-clean, --skip-tests, --skip-build
+  --docker, --prod, --port <PORT>
+
+Docker Support:
+- Multi-stage Dockerfile
+- Stage 1: Maven build
+- Stage 2: JRE runtime (Alpine)
+
+Exposed Ports:
+- 8080: Application server
+- H2 Console (dev only)
+
+================================================================================
+                              TESTING FRAMEWORK
+================================================================================
+
+Unit Tests:
+- JUnit 5 (Jupiter)
+- Mockito for mocking
+- BillingControllerTests
+
+Code Coverage:
+- JaCoCo plugin
+- Report: target/site/jacoco/index.html
+
+Test Execution:
+- mvn test
+- mvn test -Dtest=BillingControllerTests
+
+================================================================================

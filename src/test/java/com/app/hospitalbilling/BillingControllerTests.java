@@ -32,8 +32,8 @@ public class BillingControllerTests {
 
     @Test
     public void testGetAllDiagnoses() {
-        Diagnosis diagnosis1 = new Diagnosis("Headache", 50.00);
-        Diagnosis diagnosis2 = new Diagnosis("Fever", 40.00);
+        Diagnosis diagnosis1 = new Diagnosis("H001", "Headache");
+        Diagnosis diagnosis2 = new Diagnosis("F001", "Fever");
         List<Diagnosis> diagnoses = Arrays.asList(diagnosis1, diagnosis2);
         
         when(billingService.getAllDiagnoses()).thenReturn(diagnoses);
@@ -47,7 +47,7 @@ public class BillingControllerTests {
 
     @Test
     public void testCreateDiagnosis() {
-        Diagnosis diagnosis = new Diagnosis("Fracture", 150.00);
+        Diagnosis diagnosis = new Diagnosis("F002", "Fracture");
         when(billingService.saveDiagnosis(diagnosis)).thenReturn(diagnosis);
 
         ResponseEntity<Diagnosis> response = billingController.createDiagnosis(diagnosis);
